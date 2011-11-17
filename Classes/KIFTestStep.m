@@ -207,7 +207,7 @@ static NSTimeInterval KIFTestStepDefaultTimeout = 10.0;
     }];
     
     // Make sure that the timeout is set so that it doesn't timeout prematurely.
-    step.timeout = interval + 1.0;
+    step.timeout = INFINITY;
     
     return step;
 }
