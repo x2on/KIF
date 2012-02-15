@@ -14,6 +14,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <dlfcn.h>
 #import <objc/runtime.h>
+#import "NSString+TeamCity.h"
 
 
 extern id objc_msgSend(id theReceiver, SEL theSelector, ...);
@@ -258,6 +259,12 @@ static void releaseInstance()
     if (self.completionBlock) {
         self.completionBlock();
     }
+    
+    if (getenv("KIF_AUTOEXIT")) {
+        NSLog(@"Exiting (KIF_AUTOEXIT)");
+        exit(failureCount);
+    }
+
 }
 
 #pragma mark Private Methods
@@ -526,6 +533,10 @@ static void releaseInstance()
     KIFLog(@"BEGIN SCENARIO %d/%d (%d steps)", [self.scenarios indexOfObjectIdenticalTo:scenario] + 1, self.scenarios.count, scenario.steps.count);
     KIFLog(@"%@", scenario.description);
     KIFLogSeparator();
+    
+    if (getenv("TEAMCITY_LOG")) {
+        NSLog(@"##teamcity[testStarted name='%@' captureStandardOutput='true']", [scenario.description escapedForTeamCity]); 
+    }
 }
 
 - (void)_logDidSkipScenario:(KIFTestScenario *)scenario;
@@ -548,12 +559,19 @@ static void releaseInstance()
     KIFLogSeparator();
     KIFLog(@"END OF SCENARIO (duration %.2fs)", duration);
     KIFLogSeparator();
+    if (getenv("TEAMCITY_LOG")) {
+        NSLog(@"##teamcity[testFinished name='%@' duration='%.2f']", scenario, duration);
+    }
 }
 
 - (void)_logDidFailStep:(KIFTestStep *)step duration:(NSTimeInterval)duration error:(NSError *)error;
 {
     KIFLog(@"FAIL (%.2fs): %@", duration, step);
     KIFLog(@"FAILING ERROR: %@", error);
+    
+    if (getenv("TEAMCITY_LOG")) {
+        NSLog(@"##teamcity[testFailed name='%@' message='Integration tests failed' details='%@']", [self.currentScenario.description escapedForTeamCity], [[error description] escapedForTeamCity]); 
+    }
 }
 
 - (void)_logDidPassStep:(KIFTestStep *)step duration:(NSTimeInterval)duration;
