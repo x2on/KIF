@@ -275,6 +275,17 @@ typedef KIFTestStepResult (^KIFTestStepExecutionBlock)(KIFTestStep *step, NSErro
 + (id)stepToWaitForNotificationName:(NSString*)name object:(id)object;
 
 /*!
+ @method stepToWaitForNotificationName:object:whileExecutingStep:
+ @abstract A step that waits for an NSNotification emitted during execution of a child step
+ @discussion Useful when step execution causes a notification to be emitted, but executes too quickly for stepToWaitForNotificationName: to observe it.
+    An observer will be registered for the notification before the observedStep is executed.
+ @param name The name of the NSNotification
+ @param object The object to which the step should listen. Nil value will listen to all objects.
+ @result A configured test step.
+ */
++ (id)stepToWaitForNotificationName:(NSString *)name object:(id)object whileExecutingStep:(KIFTestStep *)childStep;
+
+/*!
  @method stepToTapViewWithAccessibilityLabel:
  @abstract A step that taps a particular view in the view hierarchy.
  @discussion The view or accessibility element with the given label is searched for in the view hierarchy. If the element isn't found or isn't currently tappable, then the step will attempt to wait until it is. Once the view is present and tappable, a tap event is simulated in the center of the view or element.
@@ -394,5 +405,30 @@ typedef KIFTestStepResult (^KIFTestStepExecutionBlock)(KIFTestStep *step, NSErro
  @result A configured test step.
  */
 + (id)stepToTapRowInTableViewWithAccessibilityLabel:(NSString*)tableViewLabel atIndexPath:(NSIndexPath *)indexPath;
+
+/*!
+ @enum KIFSwipeDirection
+ @abstract Directions in which to swipe.
+ @constant KIFSwipeDirectionRight Swipe to the right.
+ @constant KIFSwipeDirectionLeft Swipe to the left.
+ @constant KIFSwipeDirectionUp Swipe up.
+ @constant KIFSwipeDirectionDown Swipe down.
+ */
+typedef enum {
+    KIFSwipeDirectionRight,
+    KIFSwipeDirectionLeft,
+    KIFSwipeDirectionUp,
+    KIFSwipeDirectionDown
+} KIFSwipeDirection;
+
+/*!
+ @method stepToSwipeViewWithAccessibilityLabel:inDirection:
+ @abstract A step that swipes a particular view in the view hierarchy in the given direction.
+ @discussion The view will get the view with the specified accessibility label and swipe the screen in the given direction from the view's center.
+ @param label The accessibility label of the view to swipe.
+ @param direction The direction in which to swipe.
+ @result A configured test step.
+ */
++ (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label inDirection:(KIFSwipeDirection)direction;
 
 @end
