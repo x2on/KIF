@@ -39,7 +39,7 @@ if (!(condition)) { \
 #define KIFTestWaitCondition(condition, error, ...) ({ \
 if (!(condition)) { \
     if (error) { \
-    *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultWait userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:__VA_ARGS__], NSLocalizedDescriptionKey, nil]] autorelease]; \
+        *error = [NSError errorWithDomain:@"KIFTest" code:KIFTestStepResultWait userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:__VA_ARGS__], NSLocalizedDescriptionKey, nil]]; \
     } \
     return KIFTestStepResultWait; \
 } \
@@ -430,5 +430,16 @@ typedef enum {
  @result A configured test step.
  */
 + (id)stepToSwipeViewWithAccessibilityLabel:(NSString *)label inDirection:(KIFSwipeDirection)direction;
+
+/*!
+ @method stepToWaitForFirstResponderWithAccessibilityLabel:
+ @abstract A step that waits until a view or accessibility element is the first responder.
+ @discussion The first responder is found by searching the view hierarchy of the application's
+    main window and its accessibility label is compared to the given value. If they match, the
+    step returns success else it will attempt to wait until they do.
+ @param label The accessibility label of the element to wait for.
+ @result A configured test step.
+ */
++ (id)stepToWaitForFirstResponderWithAccessibilityLabel:(NSString *)label;
 
 @end
