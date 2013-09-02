@@ -19,5 +19,7 @@
 
 - (UIWindow *)keyboardWindow;
 - (UIWindow *)pickerViewWindow;
+- (UIWindow *)dimmingViewWindow;
+- (NSArray *)windowsWithKeyWindow;
 
 @end
